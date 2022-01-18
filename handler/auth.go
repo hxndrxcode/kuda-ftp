@@ -31,7 +31,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := client.InitClient(input)
+	token, err := client.InitClient(input, "")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, M{
 			Message: err.Error(),
@@ -42,4 +42,17 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, M{
 		Data: token,
 	})
+}
+
+func LoginByToken(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	err := client.InitByToken(token)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, M{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, M{})
 }

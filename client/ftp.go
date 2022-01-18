@@ -15,10 +15,14 @@ type FTPInput struct {
 	Port     string `json:"port" form:"port"`
 }
 
-var ftpConnection = map[string]*ftp.ServerConn{}
+type Connection struct {
+	Detail FTPInput
+	Client *ftp.ServerConn
+}
 
-func InitClient(input FTPInput) (string, error) {
-	var token string
+var ftpConnection = map[string]Connection{}
+
+func InitClient(input FTPInput, token string) (string, error) {
 	ftpClient, err := ftp.Dial(input.Host + ":" + input.Port)
 	if err != nil {
 		log.Println(err)
@@ -30,9 +34,27 @@ func InitClient(input FTPInput) (string, error) {
 		return token, err
 	}
 
-	token = helper.Random(32)
-	ftpConnection[token] = ftpClient
+	if token == "" {
+		token = helper.Random(32)
+	}
+	ftpConnection[token] = Connection{
+		Detail: input,
+		Client: ftpClient,
+	}
 	return token, nil
+}
+
+func InitByToken(token string) error {
+	if token == "" {
+		return errors.New("token not provided")
+	}
+	getConn, ok := ftpConnection[token]
+	if !ok {
+		return errors.New("invalid token")
+	}
+
+	_, err := InitClient(getConn.Detail, token)
+	return err
 }
 
 func CheckConnection(token string) (*ftp.ServerConn, error) {
@@ -40,9 +62,9 @@ func CheckConnection(token string) (*ftp.ServerConn, error) {
 	if token == "" {
 		return conn, errors.New("token not provided")
 	}
-	conn, ok := ftpConnection[token]
+	getConn, ok := ftpConnection[token]
 	if !ok {
 		return conn, errors.New("invalid token")
 	}
-	return conn, nil
+	return getConn.Client, nil
 }
