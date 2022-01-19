@@ -11,6 +11,8 @@ import Logs from "./Logs";
 export default function MainApp() {
   const { store } = useContext(RootContext)
   const [ items, setItems ] = useState([])
+  const [ curPath, setCurPath ] = useState('.')
+  const [ logs ] = useState([])
 
   const transformItems = (input) => {
     input = lodash.orderBy(input, ['Type', 'Name'], ['desc', 'asc'])
@@ -23,7 +25,7 @@ export default function MainApp() {
 
   const fetchList = () => {
     console.log('loadddd');
-    axios.get(store.api + '/api/list', store.authHeader)
+    axios.get(store.api + '/api/list?path=' + curPath, store.authHeader)
       .then(res => {
         transformItems(res.data.Data)
       })
@@ -31,10 +33,28 @@ export default function MainApp() {
       })
   }
 
+  const handleCLick = (item) => {
+    if (item.Type === 1) {
+      setCurPath(curPath + '/' + item.Name)
+    }
+    if (item.Type === 2) {
+      let c = curPath.split('/')
+      c.splice(c.length-1, 1)
+      c = c.join('/')
+      setCurPath(c)
+    }
+  }
+
+  const handleOption = (action, item) => {
+    console.log(action);
+    console.log(item);
+  }
+
   useEffect(() => {
     fetchList()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [curPath])
+
   return (
     <div>
       <Box sx={{
@@ -46,16 +66,16 @@ export default function MainApp() {
           background: '#fff',
           overflowY: 'auto'
         }}>
-          <DirList items={items}/>
+          <DirList items={items} handleClick={handleCLick} handleOption={handleOption} curPath={curPath} />
         </Box>
         <Box sx={{
           height: '18vh',
           background: '#d2d2f2',
           overflowY: 'auto'
         }}>
-          <Logs />
+          <Logs logs={logs} />
         </Box>
       </Box>
     </div>
   )
-} 
+}

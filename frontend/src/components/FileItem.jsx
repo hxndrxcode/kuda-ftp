@@ -1,17 +1,16 @@
-import { Avatar, IconButton, ListItem, ListItemButton, ListItemAvatar, ListItemText, Divider } from "@mui/material";
+import { Avatar, ListItem, ListItemButton, ListItemAvatar, ListItemText, Divider } from "@mui/material";
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Fragment } from "react";
+import FileOption from "./FileOption";
 
-export default function FileItem({ item }) {
-  
+export default function FileItem({ item, handleClick, handleOption }) {
+
   return (
     <Fragment>
       <ListItem secondaryAction={
-        <IconButton edge="end" aria-label="option">
-          <MoreVertIcon />
-        </IconButton>
+        <FileOption handleOption={handleOption} item={item}/>
       }
+      onClick={() => { handleClick(item) }}
       disablePadding
       >
         <ListItemButton >

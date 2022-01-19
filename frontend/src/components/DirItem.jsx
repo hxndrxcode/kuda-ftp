@@ -3,8 +3,8 @@ import FolderIcon from '@mui/icons-material/Folder';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Fragment } from "react";
 
-export default function DirItem({ item }) {
-  
+export default function DirItem({ item, handleClick, contextMenu }) {
+
   return (
     <Fragment>
       <ListItem secondaryAction={
@@ -12,9 +12,11 @@ export default function DirItem({ item }) {
           <MoreVertIcon />
         </IconButton>
       }
-      disablePadding
+        disablePadding
       >
-        <ListItemButton >
+        <ListItemButton
+          onClick={() => { handleClick(item) }}
+        >
           <ListItemAvatar>
             <Avatar>
               <FolderIcon color="warning" />
