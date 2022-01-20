@@ -113,3 +113,53 @@ func MkDir(c *gin.Context) {
 		Message: "Sukses",
 	})
 }
+
+func Rename(c *gin.Context) {
+	conn := c.MustGet("connection").(*ftp.ServerConn)
+	reqPath := c.PostForm("path")
+	from := reqPath + "/" + c.PostForm("from")
+	to := reqPath + "/" + c.PostForm("to")
+
+	err := conn.Rename(from, to)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, M{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, M{
+		Message: "Sukses",
+	})
+}
+
+func Delete(c *gin.Context) {
+	conn := c.MustGet("connection").(*ftp.ServerConn)
+	reqPath := c.PostForm("path")
+	item := c.PostForm("item")
+	itemType := c.PostForm("type")
+	force := c.PostForm("force")
+
+	var err error
+	deletePath := reqPath + "/" + item
+	if itemType == "0" {
+		err = conn.Delete(deletePath)
+	} else {
+		if force == "1" {
+			err = conn.RemoveDirRecur(deletePath)
+		} else {
+			err = conn.RemoveDir(deletePath)
+		}
+	}
+	if err != nil {
+		c.JSON(http.StatusBadRequest, M{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	conn.ChangeDir("/")
+	c.JSON(http.StatusOK, M{
+		Message: "Sukses",
+	})
+}

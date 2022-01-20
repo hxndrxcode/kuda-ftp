@@ -10,45 +10,48 @@ import axios from 'axios';
 import { useContext } from 'react';
 import { RootContext } from '../context/rootContext';
 
-export default function CreateFolder({ open, hc, curPath }) {
+export default function UploadFile({ open, hc, curPath }) {
   const {store} = useContext(RootContext)
-  const inputFolder = useRef('')
+  const inputFile = useRef('')
 
   const handleClose = () => {
-    hc({Type: -3})
+    hc({Type: -4})
   }
 
   const handleSubmit = () => {
-    let val = inputFolder.current.value
-    if (!val) {
-      alert('Folder Name Required!')
+    let file = inputFile.current.files[0]
+    if (!file) {
+      alert('Select The File!')
       return
     }
 
-    const data = new URLSearchParams()
-    data.set('path', curPath + '/' + val)
-    store.authHeader.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    axios.post(store.api + '/api/mkdir', data.toString(), store.authHeader)
+    const data = new FormData()
+    data.append('path', curPath)
+    data.append('file', file)
+    let config = store.authHeader
+    config.headers['Content-Type'] = 'multipart/form-data'
+    axios.post(store.api + '/api/upload', data, config)
       .then(res => {
-        hc({ Type: 33})
+        hc({ Type: 44})
       })
   }
+
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Create New Folder</DialogTitle>
+      <DialogTitle>Upload File</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
-          label="Folder Name"
-          type="text"
+          label="Select File"
+          type="file"
           fullWidth
           variant="standard"
-          inputRef={inputFolder}
+          inputRef={inputFile}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => { hc({Type: -3}) }}>Cancel</Button>
-        <Button onClick={handleSubmit} variant='contained'>Create</Button>
+        <Button onClick={() => { hc({Type: -4}) }}>Cancel</Button>
+        <Button onClick={handleSubmit} variant='contained'>Upload</Button>
       </DialogActions>
     </Dialog>
   )

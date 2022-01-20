@@ -2,15 +2,15 @@ import { Menu, MenuItem, IconButton } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Fragment, useState } from "react";
 
-export default function FileOption({ handleOption, item }) {
+export default function FileOption({ handleClick, item }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleClick = (event) => {
+  const openMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = (action, item) => {
-    handleOption(action, item)
+    handleClick({Type: action}, item)
     setAnchorEl(null);
   };
 
@@ -19,7 +19,7 @@ export default function FileOption({ handleOption, item }) {
 
   return (
     <Fragment>
-      <IconButton aria-describedby={id} variant="contained" onClick={handleClick} edge="end">
+      <IconButton aria-describedby={id} variant="contained" onClick={openMenu} edge="end">
         <MoreVertIcon />
       </IconButton>
       <Menu
@@ -33,9 +33,8 @@ export default function FileOption({ handleOption, item }) {
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       >
-        <MenuItem onClick={()=>{handleClose('rename', item)}} sx={{minHeight: 'auto'}}>Rename</MenuItem>
-        <MenuItem onClick={()=>{handleClose('delete', item)}} sx={{minHeight: 'auto'}}>Delete</MenuItem>
-        <MenuItem onClick={()=>{handleClose('chmod', item)}} sx={{minHeight: 'auto'}}>Chmod</MenuItem>
+        <MenuItem onClick={()=>{handleClose(5, item)}} sx={{minHeight: 'auto'}}>Rename</MenuItem>
+        <MenuItem onClick={()=>{handleClose(6, item)}} sx={{minHeight: 'auto'}}>Delete</MenuItem>
       </Menu>
     </Fragment>
   )

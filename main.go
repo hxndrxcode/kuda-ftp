@@ -22,6 +22,8 @@ func main() {
 		api.POST("/upload", handler.Upload)
 		api.POST("/download", handler.Download)
 		api.POST("/mkdir", handler.MkDir)
+		api.POST("/rename", handler.Rename)
+		api.POST("/delete", handler.Delete)
 	}
 
 	r.Run()

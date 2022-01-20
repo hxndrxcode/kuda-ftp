@@ -9,46 +9,64 @@ import { useRef } from 'react';
 import axios from 'axios';
 import { useContext } from 'react';
 import { RootContext } from '../context/rootContext';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
-export default function CreateFolder({ open, hc, curPath }) {
-  const {store} = useContext(RootContext)
-  const inputFolder = useRef('')
+export default function Rename({ open, hc, curPath, item }) {
+  const { store } = useContext(RootContext)
+  const inputName = useRef(item.Name)
+  const f = item.Type === 1 ? 'Folder' : 'File'
+  const [fVal, setFVal] = useState('')
 
+
+  const handleChange = (e) => {
+    setFVal(e.target.value)
+  }
   const handleClose = () => {
-    hc({Type: -3})
+    hc({ Type: -5 })
   }
 
   const handleSubmit = () => {
-    let val = inputFolder.current.value
+    let val = inputName.current.value
     if (!val) {
-      alert('Folder Name Required!')
+      alert(f + ' Name Required!')
       return
     }
 
     const data = new URLSearchParams()
-    data.set('path', curPath + '/' + val)
+    data.set('path', curPath)
+    data.set('from', item.Name)
+    data.set('to', val)
     store.authHeader.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    axios.post(store.api + '/api/mkdir', data.toString(), store.authHeader)
+    axios.post(store.api + '/api/rename', data.toString(), store.authHeader)
       .then(res => {
-        hc({ Type: 33})
+        hc({ Type: 55 })
       })
   }
+
+  useEffect(() => {
+    if (item.Name) {
+      setFVal(item.Name)
+    }
+  }, [item])
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Create New Folder</DialogTitle>
+      <DialogTitle>Rename {f}</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
-          label="Folder Name"
+          label={f + ' Name'}
           type="text"
           fullWidth
           variant="standard"
-          inputRef={inputFolder}
+          inputRef={inputName}
+          onChange={handleChange}
+          value={fVal}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => { hc({Type: -3}) }}>Cancel</Button>
-        <Button onClick={handleSubmit} variant='contained'>Create</Button>
+        <Button onClick={() => { hc({ Type: -5 }) }}>Cancel</Button>
+        <Button onClick={handleSubmit} variant='contained'>Rename</Button>
       </DialogActions>
     </Dialog>
   )

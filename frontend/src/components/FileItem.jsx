@@ -3,12 +3,12 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { Fragment } from "react";
 import FileOption from "./FileOption";
 
-export default function FileItem({ item, handleClick, handleOption }) {
+export default function FileItem({ item, handleClick }) {
 
   return (
     <Fragment>
       <ListItem secondaryAction={
-        <FileOption handleOption={handleOption} item={item}/>
+        <FileOption handleClick={handleClick} item={item}/>
       }
       onClick={() => { handleClick(item) }}
       disablePadding

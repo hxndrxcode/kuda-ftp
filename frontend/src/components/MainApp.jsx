@@ -8,12 +8,18 @@ import { RootContext } from "../context/rootContext";
 import DirList from "./DirList";
 import BottomBar from "./BottomBar";
 import CreateFolder from "./CreateFolder";
+import UploadFile from "./UploadFile";
+import Rename from "./Rename";
+import DeleteItem from "./DeleteItem";
 
 export default function MainApp() {
   const { store } = useContext(RootContext)
   const [items, setItems] = useState([])
   const [curPath, setCurPath] = useState('.')
   const [dialogMkDir, setDialogMkDir] = useState(false)
+  const [dialogUpload, setDialogUpload] = useState(false)
+  const [dialogRename, setDialogRename] = useState({})
+  const [dialogDelete, setDialogDelete] = useState({})
 
   const transformItems = (input) => {
     input = lodash.orderBy(input, ['Type', 'Name'], ['desc', 'asc'])
@@ -34,7 +40,7 @@ export default function MainApp() {
       })
   }
 
-  const handleCLick = (item) => {
+  const handleCLick = (item, item2) => {
     if (item.Type === 1) {
       setCurPath(curPath + '/' + item.Name)
     }
@@ -52,6 +58,36 @@ export default function MainApp() {
     }
     if (item.Type === 33) {
       setDialogMkDir(false)
+      fetchList()
+    }
+    if (item.Type === 4) {
+      setDialogUpload(true)
+    }
+    if (item.Type === -4) {
+      setDialogUpload(false)
+    }
+    if (item.Type === 44) {
+      setDialogUpload(false)
+      fetchList()
+    }
+    if (item.Type === 5) {
+      setDialogRename(item2)
+    }
+    if (item.Type === -5) {
+      setDialogRename({})
+    }
+    if (item.Type === 55) {
+      setDialogRename({})
+      fetchList()
+    }
+    if (item.Type === 6) {
+      setDialogDelete(item2)
+    }
+    if (item.Type === -6) {
+      setDialogDelete({})
+    }
+    if (item.Type === 66) {
+      setDialogDelete({})
       fetchList()
     }
   }
@@ -92,6 +128,9 @@ export default function MainApp() {
         </Box>
         <BottomBar handleClick={handleCLick} curPath={curPath} />
         <CreateFolder open={dialogMkDir} hc={handleCLick} curPath={curPath}  />
+        <UploadFile open={dialogUpload} hc={handleCLick} curPath={curPath}  />
+        <Rename open={Boolean(dialogRename.Name)} hc={handleCLick} curPath={curPath} item={dialogRename} />
+        <DeleteItem open={Boolean(dialogDelete.Name)} hc={handleCLick} curPath={curPath} item={dialogDelete} />
       </Box>
     </div>
   )
