@@ -1,16 +1,14 @@
-import { Avatar, IconButton, ListItem, ListItemButton, ListItemAvatar, ListItemText, Divider } from "@mui/material";
+import { Avatar, ListItem, ListItemButton, ListItemAvatar, ListItemText, Divider } from "@mui/material";
 import FolderIcon from '@mui/icons-material/Folder';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Fragment } from "react";
+import FileOption from "./FileOption";
 
-export default function DirItem({ item, handleClick, contextMenu }) {
+export default function DirItem({ item, handleClick, handleOption }) {
 
   return (
     <Fragment>
       <ListItem secondaryAction={
-        <IconButton edge="end" aria-label="option">
-          <MoreVertIcon />
-        </IconButton>
+        <FileOption handleOption={handleOption} item={item}/>
       }
         disablePadding
       >
@@ -19,7 +17,7 @@ export default function DirItem({ item, handleClick, contextMenu }) {
         >
           <ListItemAvatar>
             <Avatar>
-              <FolderIcon color="warning" />
+              <FolderIcon color="warning.light" />
             </Avatar>
           </ListItemAvatar>
           <ListItemText

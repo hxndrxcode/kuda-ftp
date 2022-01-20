@@ -21,6 +21,7 @@ func main() {
 		api.GET("/list", handler.List)
 		api.POST("/upload", handler.Upload)
 		api.POST("/download", handler.Download)
+		api.POST("/mkdir", handler.MkDir)
 	}
 
 	r.Run()

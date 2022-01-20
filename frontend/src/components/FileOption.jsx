@@ -35,6 +35,7 @@ export default function FileOption({ handleOption, item }) {
       >
         <MenuItem onClick={()=>{handleClose('rename', item)}} sx={{minHeight: 'auto'}}>Rename</MenuItem>
         <MenuItem onClick={()=>{handleClose('delete', item)}} sx={{minHeight: 'auto'}}>Delete</MenuItem>
+        <MenuItem onClick={()=>{handleClose('chmod', item)}} sx={{minHeight: 'auto'}}>Chmod</MenuItem>
       </Menu>
     </Fragment>
   )

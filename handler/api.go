@@ -96,3 +96,20 @@ func Download(c *gin.Context) {
 	file.Close()
 	c.File(tempFile)
 }
+
+func MkDir(c *gin.Context) {
+	conn := c.MustGet("connection").(*ftp.ServerConn)
+	reqPath := c.PostForm("path")
+
+	err := conn.MakeDir(reqPath)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, M{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, M{
+		Message: "Sukses",
+	})
+}
