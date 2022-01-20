@@ -4,12 +4,12 @@ import moment from 'moment'
 import prettyByte from 'pretty-bytes'
 import { useContext, useEffect, useState } from "react";
 import { RootContext } from "../context/rootContext";
-import DirList from "./DirList";
-import BottomBar from "./BottomBar";
-import CreateFolder from "./CreateFolder";
-import UploadFile from "./UploadFile";
-import Rename from "./Rename";
-import DeleteItem from "./DeleteItem";
+import DirList from "../components/DirList";
+import BottomBar from "../components/BottomBar";
+import CreateFolder from "../dialogs/CreateFolder";
+import UploadFile from "../dialogs/UploadFile";
+import Rename from "../dialogs/Rename";
+import DeleteItem from "../dialogs/DeleteItem";
 import { Api, handleApiError } from "../helper/Api";
 
 export default function MainApp() {

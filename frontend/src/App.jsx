@@ -1,7 +1,7 @@
 import MenuBar from './components/MenuBar';
 import { Container, Box } from '@mui/material';
 import RootProvider from './context/rootContext';
-import Pager from './components/Pager';
+import Pager from './pages/Pager';
 
 function App() {
   return (

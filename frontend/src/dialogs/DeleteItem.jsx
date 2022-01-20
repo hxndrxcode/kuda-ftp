@@ -31,7 +31,6 @@ export default function DeleteItem({ open, act, curPath, item }) {
         act('dialogDelete', { Open: false, Refresh: true })
       })
       .catch(e => {
-        handleApiError(e, store, dispatch)
         try {
           if (item.Type === 1 && e.response.data.Message === '550 Remove directory operation failed.') {
             let c = window.confirm('It seems the folder is not empty. Do you still want to delete it?')
@@ -40,6 +39,8 @@ export default function DeleteItem({ open, act, curPath, item }) {
             } else {
               handleClose()
             }
+          } else {
+            handleApiError(e, store, dispatch)
           }
         } catch(e) {}
       })

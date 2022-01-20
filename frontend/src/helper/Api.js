@@ -10,7 +10,7 @@ export const handleApiError = (err, store, dispatch) => {
     return
   }
 
-  console.log('ERROROROROR', err.toString())
+  console.log('ERROR HANDLED:', err.toString())
   if (err.response) {
     if (err.response.data.Message.indexOf('broken pipe')) {
       axios.get(store.api + '/auth/token', store.authHeader)
