@@ -3,7 +3,7 @@ import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { BottomNavigation, BottomNavigationAction, Box, Container, Paper } from '@mui/material';
 
-export default function BottomBar({ curPath, handleClick }) {
+export default function BottomBar({ curPath, act }) {
   const backBtnDisabled = curPath === "."
   return (
     <Box sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}>
@@ -18,18 +18,17 @@ export default function BottomBar({ curPath, handleClick }) {
               label="Back"
               icon={<ArrowBackIcon />}
               disabled={backBtnDisabled}
-              onClick={() => { handleClick({ Type: 2 }) }}
+              onClick={() => { act('parentFolder') }}
             />
             <BottomNavigationAction
-              onClick={() => { handleClick({ Type: 3 }) }}
+              onClick={() => { act('dialogCreateFolder', { Open: true }) }}
               sx={{ color: 'text.secondary' }} label="Create Folder" icon={<CreateNewFolderIcon />} />
             <BottomNavigationAction
-              onClick={() => { handleClick({ Type: 4 }) }}
+              onClick={() => { act('dialogUpload', { Open: true }) }}
               sx={{ color: 'text.secondary' }} label="Upload File" icon={<UploadFileIcon />} />
           </BottomNavigation>
         </Paper>
       </Container>
     </Box>
-
   )
 }

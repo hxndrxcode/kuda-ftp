@@ -1,8 +1,8 @@
 import { Avatar, Box, Button, Checkbox, FormControlLabel, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import axios from 'axios'
 import { useContext, useEffect, useState } from "react";
 import { RootContext } from "../context/rootContext";
+import { Api, handleApiError } from "../helper/Api";
 
 export default function Login() {
   const { store, dispatch } = useContext(RootContext)
@@ -13,6 +13,14 @@ export default function Login() {
     port: ''
   })
 
+  const handleChange = (event) => {
+    let f = event.target.id
+    let v = event.target.value
+    setForm({
+      ...form,
+      [f]: v
+    })
+  }
   const loadSavedLogin = () => {
     let get = localStorage.getItem('savedLogin')
     if (!get) return false;
@@ -36,7 +44,7 @@ export default function Login() {
     const form = new FormData(event.target)
     const remember = form.get('remember')
 
-    axios.post(store.api + '/auth/login', form)
+    Api.post(store.api + '/auth/login', form)
       .then(res => {
         if (remember) {
           saveForm(form)
@@ -46,9 +54,8 @@ export default function Login() {
           data: res.data.Data
         })
       })
-      .catch(err => {
+      .catch(e => handleApiError(e, store, dispatch))
 
-      })
   }
 
   useEffect(() => {
@@ -81,6 +88,7 @@ export default function Login() {
             autoFocus
             placeholder="127.0.0.1"
             value={form.host}
+            onChange={handleChange}
           />
           <TextField
             margin="normal"
@@ -90,6 +98,7 @@ export default function Login() {
             id="username"
             placeholder="ftpuser"
             value={form.username}
+            onChange={handleChange}
           />
           <TextField
             margin="normal"
@@ -100,6 +109,7 @@ export default function Login() {
             id="password"
             placeholder="password"
             value={form.password}
+            onChange={handleChange}
           />
           <TextField
             margin="normal"
@@ -109,6 +119,7 @@ export default function Login() {
             id="port"
             placeholder="21"
             value={form.port}
+            onChange={handleChange}
           />
           <FormControlLabel
             control={<Checkbox value="1" color="primary" name="remember"/>}
@@ -125,4 +136,4 @@ export default function Login() {
         </Box>
       </Box>
   )
-} 
+}

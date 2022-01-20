@@ -1,5 +1,4 @@
 import { Box, Breadcrumbs, Typography } from "@mui/material";
-import axios from 'axios'
 import lodash from 'lodash'
 import moment from 'moment'
 import prettyByte from 'pretty-bytes'
@@ -11,15 +10,20 @@ import CreateFolder from "./CreateFolder";
 import UploadFile from "./UploadFile";
 import Rename from "./Rename";
 import DeleteItem from "./DeleteItem";
+import { Api, handleApiError } from "../helper/Api";
 
 export default function MainApp() {
-  const { store } = useContext(RootContext)
+  const { store, dispatch } = useContext(RootContext)
   const [items, setItems] = useState([])
   const [curPath, setCurPath] = useState('.')
-  const [dialogMkDir, setDialogMkDir] = useState(false)
-  const [dialogUpload, setDialogUpload] = useState(false)
-  const [dialogRename, setDialogRename] = useState({})
-  const [dialogDelete, setDialogDelete] = useState({})
+  const [dialog, setDialog] = useState({
+    mkdir: false,
+    upload: false,
+    rename: false,
+    delete: false,
+    renameItem: {},
+    deleteItem: {}
+  })
 
   const transformItems = (input) => {
     input = lodash.orderBy(input, ['Type', 'Name'], ['desc', 'asc'])
@@ -30,77 +34,70 @@ export default function MainApp() {
     setItems(input)
   }
 
-  const fetchList = () => {
-    console.log('loadddd');
-    axios.get(store.api + '/api/list?path=' + curPath, store.authHeader)
-      .then(res => {
-        transformItems(res.data.Data)
-      })
-      .catch(err => {
-      })
-  }
-
-  const handleCLick = (item, item2) => {
-    if (item.Type === 1) {
-      setCurPath(curPath + '/' + item.Name)
-    }
-    if (item.Type === 2) {
+  const fetchList = (newPath) => {
+    let reqPath = curPath + (newPath ? '/' + newPath : '')
+    if (newPath === '..') {
       let c = curPath.split('/')
       c.splice(c.length - 1, 1)
-      c = c.join('/')
-      setCurPath(c)
+      reqPath = c.join('/')
     }
-    if (item.Type === 3) {
-      setDialogMkDir(true)
-    }
-    if (item.Type === -3) {
-      setDialogMkDir(false)
-    }
-    if (item.Type === 33) {
-      setDialogMkDir(false)
-      fetchList()
-    }
-    if (item.Type === 4) {
-      setDialogUpload(true)
-    }
-    if (item.Type === -4) {
-      setDialogUpload(false)
-    }
-    if (item.Type === 44) {
-      setDialogUpload(false)
-      fetchList()
-    }
-    if (item.Type === 5) {
-      setDialogRename(item2)
-    }
-    if (item.Type === -5) {
-      setDialogRename({})
-    }
-    if (item.Type === 55) {
-      setDialogRename({})
-      fetchList()
-    }
-    if (item.Type === 6) {
-      setDialogDelete(item2)
-    }
-    if (item.Type === -6) {
-      setDialogDelete({})
-    }
-    if (item.Type === 66) {
-      setDialogDelete({})
-      fetchList()
-    }
+
+    Api.get('api/list?path=' + reqPath, store.authHeader)
+      .then(res => {
+        setCurPath(reqPath)
+        transformItems(res.data.Data)
+      })
+      .catch(e => handleApiError(e, store, dispatch))
   }
 
-  const handleOption = (action, item) => {
-    console.log(action);
-    console.log(item);
+  const handleAction = (action, opt, item) => {
+    opt = opt || {}
+    item = item || {}
+    switch (action) {
+      case 'openFolder':
+        fetchList(item.Name)
+        break;
+      case 'parentFolder':
+        fetchList('..')
+        break;
+      case 'dialogCreateFolder':
+        setDialog({
+          ...dialog,
+          mkdir: opt.Open
+        })
+        break;
+      case 'dialogUpload':
+        setDialog({
+          ...dialog,
+          upload: opt.Open
+        })
+        break;
+      case 'dialogRename':
+        setDialog({
+          ...dialog,
+          rename: opt.Open,
+          renameItem: item
+        })
+        break;
+      case 'dialogDelete':
+        setDialog({
+          ...dialog,
+          delete: opt.Open,
+          deleteItem: item
+        })
+        break;
+      default:
+        break;
+    }
+    if (opt.Refresh) {
+      fetchList()
+    }
   }
 
   useEffect(() => {
     fetchList()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [curPath])
+  }, [])
 
   return (
     <div>
@@ -124,13 +121,13 @@ export default function MainApp() {
           overflowY: 'auto',
           height: 'calc(100vh - 176px)'
         }}>
-          <DirList items={items} handleClick={handleCLick} handleOption={handleOption} />
+          <DirList items={items} act={handleAction} />
         </Box>
-        <BottomBar handleClick={handleCLick} curPath={curPath} />
-        <CreateFolder open={dialogMkDir} hc={handleCLick} curPath={curPath}  />
-        <UploadFile open={dialogUpload} hc={handleCLick} curPath={curPath}  />
-        <Rename open={Boolean(dialogRename.Name)} hc={handleCLick} curPath={curPath} item={dialogRename} />
-        <DeleteItem open={Boolean(dialogDelete.Name)} hc={handleCLick} curPath={curPath} item={dialogDelete} />
+        <BottomBar act={handleAction} curPath={curPath} />
+        <CreateFolder open={dialog.mkdir} act={handleAction} curPath={curPath} />
+        <UploadFile open={dialog.upload} act={handleAction} curPath={curPath} />
+        <Rename open={dialog.rename} act={handleAction} curPath={curPath} item={dialog.renameItem} />
+        <DeleteItem open={dialog.delete} act={handleAction} curPath={curPath} item={dialog.deleteItem} />
       </Box>
     </div>
   )

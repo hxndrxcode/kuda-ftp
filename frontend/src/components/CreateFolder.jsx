@@ -3,19 +3,18 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-// import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useRef } from 'react';
-import axios from 'axios';
 import { useContext } from 'react';
 import { RootContext } from '../context/rootContext';
+import { Api, handleApiError } from '../helper/Api';
 
-export default function CreateFolder({ open, hc, curPath }) {
-  const {store} = useContext(RootContext)
+export default function CreateFolder({ open, act, curPath }) {
+  const { store, dispatch} = useContext(RootContext)
   const inputFolder = useRef('')
 
   const handleClose = () => {
-    hc({Type: -3})
+    act('dialogCreateFolder', { Open: false })
   }
 
   const handleSubmit = () => {
@@ -28,10 +27,11 @@ export default function CreateFolder({ open, hc, curPath }) {
     const data = new URLSearchParams()
     data.set('path', curPath + '/' + val)
     store.authHeader.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    axios.post(store.api + '/api/mkdir', data.toString(), store.authHeader)
+    Api.post('api/mkdir', data.toString(), store.authHeader)
       .then(res => {
-        hc({ Type: 33})
+        act('dialogCreateFolder', { Open: false, Refresh: true })
       })
+      .catch(e => handleApiError(e, store, dispatch))
   }
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -47,7 +47,7 @@ export default function CreateFolder({ open, hc, curPath }) {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => { hc({Type: -3}) }}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={handleSubmit} variant='contained'>Create</Button>
       </DialogActions>
     </Dialog>

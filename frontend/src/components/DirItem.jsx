@@ -3,17 +3,17 @@ import FolderIcon from '@mui/icons-material/Folder';
 import { Fragment } from "react";
 import FileOption from "./FileOption";
 
-export default function DirItem({ item, handleClick }) {
+export default function DirItem({ item, act }) {
 
   return (
     <Fragment>
       <ListItem secondaryAction={
-        <FileOption handleClick={handleClick} item={item}/>
+        <FileOption act={act} item={item}/>
       }
         disablePadding
       >
         <ListItemButton
-          onClick={() => { handleClick(item) }}
+          onClick={() => { act('openFolder', null, item) }}
         >
           <ListItemAvatar>
             <Avatar>
