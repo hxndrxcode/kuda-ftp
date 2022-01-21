@@ -11,7 +11,7 @@ const RootProvider = ({ children }) => {
   const [ store, dispatch ] = useReducer(reducer, {
     isLogin: false,
     api: REACT_APP_API_URL,
-    authHeader: {
+    apiConfig: {
       headers: { Authorization: authToken }
     },
     authToken,

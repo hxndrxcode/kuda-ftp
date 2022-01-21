@@ -20,7 +20,7 @@ func main() {
 	{
 		api.GET("/list", handler.List)
 		api.POST("/upload", handler.Upload)
-		api.POST("/download", handler.Download)
+		api.GET("/download", handler.Download)
 		api.POST("/mkdir", handler.MkDir)
 		api.POST("/rename", handler.Rename)
 		api.POST("/delete", handler.Delete)

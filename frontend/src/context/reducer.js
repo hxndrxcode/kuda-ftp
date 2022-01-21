@@ -9,7 +9,7 @@ function reducer(store, action) {
             return {
                 ...store,
                 isLogin: true,
-                authHeader: {
+                apiConfig: {
                     headers: {
                         Authorization: action.data
                     }
@@ -20,7 +20,7 @@ function reducer(store, action) {
             return {
                 ...store,
                 isLogin: false,
-                authHeader: {
+                apiConfig: {
                     headers: {}
                 },
             }

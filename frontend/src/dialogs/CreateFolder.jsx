@@ -26,8 +26,8 @@ export default function CreateFolder({ open, act, curPath }) {
 
     const data = new URLSearchParams()
     data.set('path', curPath + '/' + val)
-    store.authHeader.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    Api.post('api/mkdir', data.toString(), store.authHeader)
+    store.apiConfig.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    Api.post('api/mkdir', data.toString(), store.apiConfig)
       .then(res => {
         act('dialogCreateFolder', { Open: false, Refresh: true })
       })

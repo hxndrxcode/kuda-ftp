@@ -42,7 +42,7 @@ export default function MainApp() {
       reqPath = c.join('/')
     }
 
-    Api.get('api/list?path=' + reqPath, store.authHeader)
+    Api.get('api/list?path=' + reqPath, store.apiConfig)
       .then(res => {
         setCurPath(reqPath)
         transformItems(res.data.Data)
@@ -50,6 +50,24 @@ export default function MainApp() {
       .catch(e => handleApiError(e, store, dispatch))
   }
 
+  const openFile = (item) => {
+    const reqPath = curPath + '/' + item.Name
+    Api({
+      url: 'api/download?filepath=' + reqPath,
+      method: 'get',
+      headers: store.apiConfig.headers,
+      responseType: 'blob'
+    })
+    .then(res => {
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', item.Name);
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch(e => handleApiError(e, store, dispatch))
+  }
   const handleAction = (action, opt, item) => {
     opt = opt || {}
     item = item || {}
@@ -59,6 +77,9 @@ export default function MainApp() {
         break;
       case 'parentFolder':
         fetchList('..')
+        break;
+      case 'openFile':
+        openFile(item)
         break;
       case 'dialogCreateFolder':
         setDialog({

@@ -35,8 +35,8 @@ export default function Rename({ open, act, curPath, item }) {
     data.set('path', curPath)
     data.set('from', item.Name)
     data.set('to', val)
-    store.authHeader.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    Api.post('api/rename', data.toString(), store.authHeader)
+    store.apiConfig.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    Api.post('api/rename', data.toString(), store.apiConfig)
       .then(res => {
         act('dialogRename', { Open: false, Refresh: true })
       })

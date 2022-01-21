@@ -25,8 +25,8 @@ export default function DeleteItem({ open, act, curPath, item }) {
       data.set('force', 1)
     }
 
-    store.authHeader.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    Api.post('api/delete', data.toString(), store.authHeader)
+    store.apiConfig.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    Api.post('api/delete', data.toString(), store.apiConfig)
       .then(res => {
         act('dialogDelete', { Open: false, Refresh: true })
       })

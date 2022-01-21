@@ -27,7 +27,7 @@ export default function UploadFile({ open, act, curPath }) {
     const data = new FormData()
     data.append('path', curPath)
     data.append('file', file)
-    let config = store.authHeader
+    let config = store.apiConfig
     config.headers['Content-Type'] = 'multipart/form-data'
     Api.post('api/upload', data, config)
       .then(res => {

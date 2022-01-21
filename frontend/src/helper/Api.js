@@ -13,7 +13,7 @@ export const handleApiError = (err, store, dispatch) => {
   console.log('ERROR HANDLED:', err.toString())
   if (err.response) {
     if (err.response.data.Message.indexOf('broken pipe')) {
-      axios.get(store.api + '/auth/token', store.authHeader)
+      axios.get(store.api + '/auth/token', store.apiConfig)
       .then(res => {
         dispatch({
           type: 'set_warning',
@@ -22,22 +22,32 @@ export const handleApiError = (err, store, dispatch) => {
       })
       .catch(() => {
         localStorage.removeItem('auth_token')
+        dispatch({
+          type: 'set_warning',
+          data: 'Session expired. Please logout and re-login'
+        })
       })
+      return
     }
-    if (err.response.status === 401) {
+
+    if (err.response.data.Message === 'invalid token') {
       dispatch({
         type: 'set_warning',
         data: 'Session expired. Please logout and re-login'
       })
+      return
     }
+
     if (err.response.data.Message) {
       dispatch({
         type: 'set_warning',
         data: err.response.data.Message
       })
+      return
     }
   } else {
-    console.error(err)
+    console.error('NON-API ERROR:', err)
+    return
   }
 }
 
